@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noctis Secure — веб-презентация</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0d1728;
+      --card: rgba(18, 28, 48, 0.72);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef4ff;
+      --muted: #9fb0cc;
+      --accent: #59d6ff;
+      --accent-2: #8f6dff;
+      --good: #68f0b7;
+      --warn: #ffc36b;
+      --shadow: 0 30px 80px rgba(0,0,0,0.45);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(89,214,255,0.14), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(143,109,255,0.14), transparent 22%),
+        radial-gradient(circle at 55% 85%, rgba(104,240,183,0.10), transparent 18%),
+        linear-gradient(135deg, var(--bg), #040916 60%, #02050d 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .deck {
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+
+    .bg-grid::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    .slides {
+      height: 100%;
+      transition: transform 0.7s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .slide {
+      height: 100vh;
+      width: 100vw;
+      padding: 56px clamp(24px, 5vw, 80px);
+      display: grid;
+      align-items: center;
+      position: relative;
+    }
+
+    .frame {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      min-height: 78vh;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      padding: clamp(26px, 4vw, 44px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .frame::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -30% auto;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(89,214,255,0.12), transparent 65%);
+      pointer-events: none;
+    }
+
+    .kicker {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 14px;
+      border: 1px solid rgba(89,214,255,0.18);
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      background: rgba(89,214,255,0.08);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      font-size: clamp(42px, 7vw, 86px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      max-width: 9.5ch;
+    }
+    h2 {
+      font-size: clamp(30px, 4vw, 56px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-top: 18px;
+    }
+    .lead {
+      font-size: clamp(18px, 2.1vw, 24px);
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 58ch;
+      margin-top: 22px;
+    }
+    .small-note {
+      color: #7f92b4;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 34px;
+      align-items: center;
+      height: 100%;
+    }
+
+    .hero-stats,
+    .grid-3,
+    .grid-2,
+    .metrics,
+    .pricing,
+    .timeline {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero-stats { grid-template-columns: repeat(3, 1fr); margin-top: 34px; max-width: 780px; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); margin-top: 28px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); margin-top: 28px; }
+    .metrics { grid-template-columns: repeat(4, 1fr); margin-top: 26px; }
+    .pricing { grid-template-columns: 1fr 1fr 1fr; margin-top: 26px; }
+    .timeline { grid-template-columns: repeat(4, 1fr); margin-top: 30px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent 40%);
+      pointer-events: none;
+    }
+
+    .stat {
+      font-size: clamp(28px, 3vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-top: 8px;
+    }
+
+    .label { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .accent { color: var(--accent); }
+    .accent2 { color: #b8a7ff; }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+
+    .bullet-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .bullet {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(89,214,255,0.18), rgba(143,109,255,0.18));
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .visual-box {
+      min-height: 500px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .orbital {
+      width: min(520px, 100%);
+      aspect-ratio: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .ring, .ring2, .ring3 {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.11);
+    }
+    .ring { inset: 10%; }
+    .ring2 { inset: 22%; }
+    .ring3 { inset: 34%; }
+
+    .center-core {
+      width: 42%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #7fe2ff, #244f8f 48%, #0b1324 74%);
+      box-shadow: 0 0 80px rgba(89,214,255,0.3);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      padding: 18px;
+    }
+
+    .node {
+      position: absolute;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(9,15,28,0.95);
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 13px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.32);
+    }
+
+    .node.n1 { top: 8%; right: 10%; }
+    .node.n2 { bottom: 16%; right: 4%; }
+    .node.n3 { bottom: 8%; left: 14%; }
+    .node.n4 { top: 17%; left: 5%; }
+
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+    }
+
+    .mini-tag {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+    }
+
+    .number {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .chart {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 18px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #59d6ff, #8f6dff);
+      margin-bottom: 14px;
+    }
+
+    .close-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 26px;
+      align-items: stretch;
+      margin-top: 24px;
+    }
+
+    .cta-box {
+      display: grid;
+      align-content: space-between;
+      min-height: 280px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .btn {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(89,214,255,0.25), rgba(143,109,255,0.22));
+      border-color: rgba(89,214,255,0.28);
+    }
+
+    .nav {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      display: flex;
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .nav button {
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      background: rgba(11, 18, 31, 0.82);
+      color: var(--text);
+      font-size: 22px;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav button:hover { background: rgba(18, 28, 48, 0.95); }
+
+    .top-ui {
+      position: fixed;
+      top: 18px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .brand,
+    .counter {
+      pointer-events: auto;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(11, 18, 31, 0.72);
+      backdrop-filter: blur(12px);
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .brand strong,
+    .counter strong { color: var(--text); }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      z-index: 30;
+    }
+
+    .progress > div {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.5s ease;
+      box-shadow: 0 0 22px rgba(89,214,255,0.45);
+    }
+
+    .hint {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 24px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      background: rgba(11, 18, 31, 0.62);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    .muted-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .list-clean {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #d8e4fa;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    @media (max-width: 1024px) {
+      .two-col,
+      .close-layout,
+      .team-grid,
+      .timeline,
+      .metrics,
+      .pricing,
+      .grid-3,
+      .grid-2,
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .visual-box { min-height: 360px; }
+      .orbital { width: min(420px, 100%); }
+    }
+
+    @media (max-width: 760px) {
+      body { overflow: hidden; }
+      .slide { padding: 72px 16px 86px; }
+      .frame { min-height: calc(100vh - 158px); padding: 22px; }
+      .two-col,
+      .close-layout,
+      .team-grid,
+      .timeline,
+      .metrics,
+      .pricing,
+      .grid-3,
+      .grid-2,
+      .hero-stats { grid-template-columns: 1fr; }
+      .section-title-row { flex-direction: column; align-items: start; }
+      .hint { display: none; }
+      .nav { right: 16px; bottom: 16px; }
+      .top-ui { left: 16px; right: 16px; }
+      .orbital { width: min(320px, 100%); }
+      .node { font-size: 12px; padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck bg-grid">
+    <div class="top-ui">
+      <div class="brand"><strong>Noctis Secure</strong> · веб-презентация</div>
+      <div class="counter">Слайд <strong id="currentSlide">1</strong> / <strong id="totalSlides">10</strong></div>
+    </div>
+
+    <div class="slides" id="slides">
+      <section class="slide">
+        <div class="frame">
+          <div class="two-col">
+            <div>
+              <div class="kicker">● вымышленная компания · cybersecurity SaaS</div>
+              <h1>Noctis Secure</h1>
+              <p class="lead">Платформа киберустойчивости для среднего и крупного бизнеса: обнаружение угроз, автоматизация реакции и снижение финансовых потерь от инцидентов.</p>
+              <div class="pill-row">
+                <span class="pill">SOC automation</span>
+                <span class="pill">Threat detection</span>
+                <span class="pill">Compliance</span>
+                <span class="pill">24/7 monitoring</span>
+              </div>
+              <div class="hero-stats">
+                <div class="card">
+                  <div class="label">Снижение времени реагирования</div>
+                  <div class="stat accent">-73%</div>
+                </div>
+                <div class="card">
+                  <div class="label">Средний ROI клиентов за 12 мес.</div>
+                  <div class="stat good">312%</div>
+                </div>
+                <div class="card">
+                  <div class="label">Ложноположительные алерты</div>
+                  <div class="stat accent2">-58%</div>
+                </div>
+              </div>
+              <div class="small-note">Все компании, цифры и кейсы в этой презентации — вымышленные и созданы для демонстрации.</div>
+            </div>
+            <div class="visual-box">
+              <div class="orbital">
+                <div class="ring"></div>
+                <div class="ring2"></div>
+                <div class="ring3"></div>
+                <div class="center-core">Noctis<br/>Secure</div>
+                <div class="node n1">AI-аналитика угроз</div>
+                <div class="node n2">SOAR-автоматизация</div>
+                <div class="node n3">Контроль соответствия</div>
+                <div class="node n4">Единая консоль SOC</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="section-title-row">
+            <div>
+              <div class="kicker">01 · проблема рынка</div>
+              <h2>Кибератаки ускоряются быстрее, чем команды безопасности</h2>
+            </div>
+            <div class="mini-tag">Фокус: mid-market и enterprise</div>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <div class="number accent">1</div>
+              <h3>Разрозненные инструменты</h3>
+              <p class="lead" style="font-size:18px;max-width:none;">SIEM, EDR, IAM и тикет-системы работают отдельно, а аналитики теряют время на ручную корреляцию событий.</p>
+            </div>
+            <div class="card">
+              <div class="number accent2">2</div>
+              <h3>Дефицит специалистов</h3>
+              <p class="lead" style="font-size:18px;max-width:none;">Даже хорошо укомплектованный SOC не успевает обрабатывать поток инцидентов 24/7 без автоматизации рутинных задач.</p>
+            </div>
+            <div class="card">
+              <div class="number good">3</div>
+              <h3>Высокая цена ошибки</h3>
+              <p class="lead" style="font-size:18px;max-width:none;">Остановка процессов, утечка данных и штрафы за несоблюдение требований приводят к прямым финансовым потерям и репутационным рискам.</p>
+            </div>
+          </div>
+          <div class="metrics">
+            <div class="card"><div class="label">Среднее время расследования</div><div class="stat">9,4 ч</div></div>
+            <div class="card"><div class="label">Доля ручных операций в SOC</div><div class="stat">61%</div></div>
+            <div class="card"><div class="label">Потери от 1 критического инцидента</div><div class="stat">₽24 млн</div></div>
+            <div class="card"><div class="label">Доля ложных тревог</div><div class="stat">47%</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="two-col">
+            <div>
+              <div class="kicker">02 · решение</div>
+              <h2>Единая платформа для обнаружения, приоритизации и реакции</h2>
+              <div class="bullet-list">
+                <div class="bullet">
+                  <div class="icon">A</div>
+                  <div>
+                    <h3>AI-корреляция инцидентов</h3>
+                    <p class="label">Система объединяет сигналы из разных источников и выделяет действительно опасные события вместо шумового потока алертов.</p>
+                  </div>
+                </div>
+                <div class="bullet">
+                  <div class="icon">S</div>
+                  <div>
+                    <h3>SOAR-плейбуки без кода</h3>
+                    <p class="label">Команды безопасности автоматизируют типовые сценарии: изоляцию устройства, отключение доступа, эскалацию кейса и сбор артефактов.</p>
+                  </div>
+                </div>
+                <div class="bullet">
+                  <div class="icon">C</div>
+                  <div>
+                    <h3>Compliance-by-design</h3>
+                    <p class="label">Встроенные шаблоны контроля помогают готовиться к аудиту и видеть текущее состояние требований в реальном времени.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="padding:26px;min-height:540px;display:grid;align-content:start;gap:16px;">
+                <div class="mini-tag">Core architecture</div>
+                <svg viewBox="0 0 520 500" width="100%" height="100%" aria-label="Схема платформы">
+                  <defs>
+                    <linearGradient id="g1" x1="0" x2="1">
+                      <stop offset="0%" stop-color="#59d6ff"/>
+                      <stop offset="100%" stop-color="#8f6dff"/>
+                    </linearGradient>
+                  </defs>
+                  <rect x="150" y="35" width="220" height="70" rx="20" fill="rgba(89,214,255,0.10)" stroke="rgba(89,214,255,0.25)"/>
+                  <text x="260" y="78" fill="#eef4ff" text-anchor="middle" font-size="20" font-weight="700">Источники данных</text>
+
+                  <rect x="45" y="155" width="430" height="92" rx="24" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+                  <text x="260" y="190" fill="#eef4ff" text-anchor="middle" font-size="18" font-weight="700">Noctis Data Fabric</text>
+                  <text x="260" y="220" fill="#9fb0cc" text-anchor="middle" font-size="14">Нормализация · enrichment · корреляция · risk scoring</text>
+
+                  <rect x="65" y="295" width="120" height="95" rx="20" fill="rgba(89,214,255,0.08)" stroke="rgba(89,214,255,0.2)"/>
+                  <rect x="200" y="295" width="120" height="95" rx="20" fill="rgba(143,109,255,0.08)" stroke="rgba(143,109,255,0.22)"/>
+                  <rect x="335" y="295" width="120" height="95" rx="20" fill="rgba(104,240,183,0.08)" stroke="rgba(104,240,183,0.2)"/>
+                  <text x="125" y="335" fill="#eef4ff" text-anchor="middle" font-size="18" font-weight="700">Detect</text>
+                  <text x="125" y="360" fill="#9fb0cc" text-anchor="middle" font-size="13">аномалии</text>
+                  <text x="260" y="335" fill="#eef4ff" text-anchor="middle" font-size="18" font-weight="700">Prioritize</text>
+                  <text x="260" y="360" fill="#9fb0cc" text-anchor="middle" font-size="13">риск и контекст</text>
+                  <text x="395" y="335" fill="#eef4ff" text-anchor="middle" font-size="18" font-weight="700">Respond</text>
+                  <text x="395" y="360" fill="#9fb0cc" text-anchor="middle" font-size="13">авто-действия</text>
+
+                  <rect x="130" y="430" width="260" height="40" rx="18" fill="url(#g1)" opacity="0.85"/>
+                  <text x="260" y="455" fill="#03111f" text-anchor="middle" font-size="16" font-weight="800">Единая консоль аналитика</text>
+
+                  <line x1="260" y1="105" x2="260" y2="155" stroke="url(#g1)" stroke-width="3"/>
+                  <line x1="125" y1="247" x2="125" y2="295" stroke="url(#g1)" stroke-width="3"/>
+                  <line x1="260" y1="247" x2="260" y2="295" stroke="url(#g1)" stroke-width="3"/>
+                  <line x1="395" y1="247" x2="395" y2="295" stroke="url(#g1)" stroke-width="3"/>
+                  <line x1="260" y1="390" x2="260" y2="430" stroke="url(#g1)" stroke-width="3"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="section-title-row">
+            <div>
+              <div class="kicker">03 · продукт</div>
+              <h2>Три модуля, которые закрывают полный цикл безопасности</h2>
+            </div>
+            <div class="mini-tag">Modular SaaS + private cloud</div>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <div class="label">Module 01</div>
+              <div class="stat accent" style="font-size:30px;">Sentinel SIEM+</div>
+              <p class="lead" style="font-size:18px;max-width:none;">Сбор телеметрии, правила детекта и карта атак с приоритизацией по бизнес-критичности активов.</p>
+              <ul class="list-clean">
+                <li>250+ готовых коннекторов</li>
+                <li>Гибкие политики хранения</li>
+                <li>Визуальные расследования</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="label">Module 02</div>
+              <div class="stat accent2" style="font-size:30px;">Orbit SOAR</div>
+              <p class="lead" style="font-size:18px;max-width:none;">Автоматизация повторяющихся действий и запуск сценариев без участия аналитика при типовых инцидентах.</p>
+              <ul class="list-clean">
+                <li>Low-code редактор плейбуков</li>
+                <li>SLA и эскалации</li>
+                <li>Интеграция с ITSM</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="label">Module 03</div>
+              <div class="stat good" style="font-size:30px;">Shield Compliance</div>
+              <p class="lead" style="font-size:18px;max-width:none;">Матрицы контролей, доказательная база для аудита и онлайн-мониторинг критичных политик безопасности.</p>
+              <ul class="list-clean">
+                <li>Шаблоны политик</li>
+                <li>Контроль пробелов</li>
+                <li>Экспорт отчётности</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="two-col">
+            <div>
+              <div class="kicker">04 · ценность для клиента</div>
+              <h2>Быстрый эффект уже в первые 90 дней</h2>
+              <div class="grid-2">
+                <div class="card">
+                  <div class="label">Операционный эффект</div>
+                  <div class="stat">-58%</div>
+                  <p class="label">снижение объёма некачественных алертов после настройки корреляции и базовых плейбуков.</p>
+                </div>
+                <div class="card">
+                  <div class="label">Финансовый эффект</div>
+                  <div class="stat good">₽18,6 млн</div>
+                  <p class="label">средняя оценка предотвращённых потерь за первый год у клиентов с 2 000+ сотрудниками.</p>
+                </div>
+                <div class="card">
+                  <div class="label">Эффект для команды</div>
+                  <div class="stat accent2">+41%</div>
+                  <p class="label">рост пропускной способности SOC без расширения штата аналитиков первой линии.</p>
+                </div>
+                <div class="card">
+                  <div class="label">Эффект для аудита</div>
+                  <div class="stat warn">-64%</div>
+                  <p class="label">меньше времени на подготовку к внутренним и внешним проверкам по ИБ-процессам.</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="min-height:530px;display:grid;align-content:start;">
+                <div class="mini-tag">90-day implementation plan</div>
+                <div class="timeline" style="grid-template-columns:1fr;gap:14px;">
+                  <div class="bullet"><div class="icon">1</div><div><h3>Недели 1–2</h3><p class="label">Аудит активов, подключение ключевых источников, определение критичных сценариев.</p></div></div>
+                  <div class="bullet"><div class="icon">2</div><div><h3>Недели 3–6</h3><p class="label">Запуск правил детекта, настройка приоритизации, создание первых playbooks.</p></div></div>
+                  <div class="bullet"><div class="icon">3</div><div><h3>Недели 7–10</h3><p class="label">Обучение команды, оптимизация шумовых правил и подключение бизнес-контекста.</p></div></div>
+                  <div class="bullet"><div class="icon">4</div><div><h3>Недели 11–12</h3><p class="label">Выход на регулярную отчётность, KPI по MTTR и запуск контрольной панели руководителя.</p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="section-title-row">
+            <div>
+              <div class="kicker">05 · рынок и клиенты</div>
+              <h2>Фокус на компаниях, где простой системы стоит дороже внедрения</h2>
+            </div>
+            <div class="mini-tag">TAM / SAM / ICP</div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="label">Ключевые отрасли</div>
+              <div class="bullet-list">
+                <div class="bullet"><div class="icon">F</div><div><h3>Финтех</h3><p class="label">Высокие требования к устойчивости, чувствительные данные, множество внешних интеграций.</p></div></div>
+                <div class="bullet"><div class="icon">R</div><div><h3>Ритейл</h3><p class="label">Большая распределённая инфраструктура, критичность непрерывности процессов и платежей.</p></div></div>
+                <div class="bullet"><div class="icon">I</div><div><h3>Промышленность</h3><p class="label">Растущая цифровизация производственных систем и высокие потери от остановки линий.</p></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="label">Объём рынка и портрет клиента</div>
+              <div class="metrics" style="grid-template-columns:1fr 1fr;">
+                <div class="card"><div class="label">TAM</div><div class="stat">₽58 млрд</div><div class="label">рынок платформ ИБ-автоматизации</div></div>
+                <div class="card"><div class="label">SAM</div><div class="stat">₽14 млрд</div><div class="label">целевой сегмент RU/CIS mid-enterprise</div></div>
+                <div class="card"><div class="label">ICP</div><div class="stat">500–10 000</div><div class="label">сотрудников в компании</div></div>
+                <div class="card"><div class="label">ACV</div><div class="stat">₽3,8 млн</div><div class="label">средний годовой контракт</div></div>
+              </div>
+              <div class="pill-row">
+                <span class="pill">CISO</span>
+                <span class="pill">Head of SOC</span>
+                <span class="pill">IT Director</span>
+                <span class="pill">Risk & Compliance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="section-title-row">
+            <div>
+              <div class="kicker">06 · бизнес-модель</div>
+              <h2>Подписка + внедрение + enterprise-расширения</h2>
+            </div>
+            <div class="mini-tag">Predictable recurring revenue</div>
+          </div>
+          <div class="pricing">
+            <div class="card">
+              <div class="label">Base</div>
+              <div class="stat accent">₽190k / мес</div>
+              <p class="lead" style="font-size:18px;max-width:none;">Для компаний, которым нужен единый центр видимости и базовая корреляция инцидентов.</p>
+              <ul class="list-clean">
+                <li>До 25 источников данных</li>
+                <li>Core dashboards</li>
+                <li>E-mail support</li>
+              </ul>
+            </div>
+            <div class="card" style="outline:1px solid rgba(89,214,255,0.28);">
+              <div class="label">Growth</div>
+              <div class="stat accent2">₽420k / мес</div>
+              <p class="lead" style="font-size:18px;max-width:none;">Оптимальный пакет для зрелых SOC-команд с автоматизацией типовых кейсов и отчётностью.</p>
+              <ul class="list-clean">
+                <li>До 80 источников данных</li>
+                <li>SOAR-плейбуки</li>
+                <li>Compliance dashboard</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="label">Enterprise</div>
+              <div class="stat good">Индивидуально</div>
+              <p class="lead" style="font-size:18px;max-width:none;">Private cloud / on-premise, расширенные SLA, кастомные коннекторы и выделенный success team.</p>
+              <ul class="list-clean">
+                <li>Без лимита по источникам</li>
+                <li>24/7 support</li>
+                <li>Custom deployment</li>
+              </ul>
+            </div>
+          </div>
+          <div class="metrics">
+            <div class="card"><div class="label">Gross margin</div><div class="stat">78%</div></div>
+            <div class="card"><div class="label">NRR</div><div class="stat">128%</div></div>
+            <div class="card"><div class="label">Payback CAC</div><div class="stat">11 мес.</div></div>
+            <div class="card"><div class="label">Services share</div><div class="stat">17%</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="two-col">
+            <div>
+              <div class="kicker">07 · traction</div>
+              <h2>Рост за счёт повторяемого enterprise-sales процесса</h2>
+              <div class="metrics" style="grid-template-columns:1fr 1fr;">
+                <div class="card"><div class="label">Клиенты</div><div class="stat">46</div><div class="label">активных B2B контрактов</div></div>
+                <div class="card"><div class="label">ARR</div><div class="stat">₽174 млн</div><div class="label">на конец 2026 Q1</div></div>
+                <div class="card"><div class="label">Retention</div><div class="stat good">94%</div><div class="label">gross logo retention</div></div>
+                <div class="card"><div class="label">Pipeline</div><div class="stat accent2">₽96 млн</div><div class="label">взвешенный pipeline на 2 квартала</div></div>
+              </div>
+              <div class="pill-row">
+                <span class="pill">Inbound content</span>
+                <span class="pill">Channel partners</span>
+                <span class="pill">Industry events</span>
+                <span class="pill">Pilot-to-contract</span>
+              </div>
+            </div>
+            <div>
+              <div class="card chart">
+                <div class="mini-tag">ARR growth, ₽ млн</div>
+                <svg viewBox="0 0 520 320" width="100%" height="100%" aria-label="График роста ARR">
+                  <defs>
+                    <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#59d6ff"/>
+                      <stop offset="100%" stop-color="#8f6dff"/>
+                    </linearGradient>
+                    <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(89,214,255,0.35)"/>
+                      <stop offset="100%" stop-color="rgba(89,214,255,0.02)"/>
+                    </linearGradient>
+                  </defs>
+                  <g stroke="rgba(255,255,255,0.08)">
+                    <line x1="60" y1="40" x2="60" y2="270"/>
+                    <line x1="60" y1="270" x2="480" y2="270"/>
+                    <line x1="60" y1="210" x2="480" y2="210"/>
+                    <line x1="60" y1="150" x2="480" y2="150"/>
+                    <line x1="60" y1="90" x2="480" y2="90"/>
+                  </g>
+                  <path d="M60 250 L150 230 L240 195 L330 142 L420 78 L420 270 L60 270 Z" fill="url(#fillGrad)"/>
+                  <path d="M60 250 L150 230 L240 195 L330 142 L420 78" fill="none" stroke="url(#lineGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <g fill="#eef4ff" font-size="13">
+                    <text x="48" y="274">0</text>
+                    <text x="35" y="214">50</text>
+                    <text x="28" y="154">100</text>
+                    <text x="28" y="94">150</text>
+                    <text x="53" y="295">2022</text>
+                    <text x="143" y="295">2023</text>
+                    <text x="233" y="295">2024</text>
+                    <text x="323" y="295">2025</text>
+                    <text x="413" y="295">2026</text>
+                  </g>
+                  <g fill="#59d6ff">
+                    <circle cx="60" cy="250" r="5"/>
+                    <circle cx="150" cy="230" r="5"/>
+                    <circle cx="240" cy="195" r="5"/>
+                    <circle cx="330" cy="142" r="5"/>
+                    <circle cx="420" cy="78" r="5"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="section-title-row">
+            <div>
+              <div class="kicker">08 · команда</div>
+              <h2>Сочетание продуктовой экспертизы, enterprise-продаж и ИБ-практики</h2>
+            </div>
+            <div class="mini-tag">Founders + operators</div>
+          </div>
+          <div class="team-grid">
+            <div class="card">
+              <div class="avatar">AK</div>
+              <h3>Алексей Крылов</h3>
+              <p class="label">CEO</p>
+              <p class="label">12 лет в B2B SaaS, ранее запускал облачные продукты для корпоративного сегмента.</p>
+            </div>
+            <div class="card">
+              <div class="avatar">EM</div>
+              <h3>Елена Миронова</h3>
+              <p class="label">CTO</p>
+              <p class="label">Экс-руководитель команды security analytics, специализация — детекты и data engineering.</p>
+            </div>
+            <div class="card">
+              <div class="avatar">IR</div>
+              <h3>Игорь Романов</h3>
+              <p class="label">VP Sales</p>
+              <p class="label">Построил enterprise-воронку в трёх технологических компаниях с ARR > ₽1 млрд.</p>
+            </div>
+            <div class="card">
+              <div class="avatar">SN</div>
+              <h3>Софья Никитина</h3>
+              <p class="label">Head of Customer Success</p>
+              <p class="label">Отвечает за внедрение, adoption и расширение контрактов в аккаунтах top-tier.</p>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:20px;">
+            <div class="card">
+              <div class="label">Что усиливает команду</div>
+              <ul class="list-clean">
+                <li>Собственный advisory board из CISO и CIO</li>
+                <li>Партнёрская сеть интеграторов и MSSP</li>
+                <li>Продуктовый цикл релизов каждые 6 недель</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="label">Оргмасштаб</div>
+              <ul class="list-clean">
+                <li>68 сотрудников, из них 34 в R&D</li>
+                <li>11 специалистов в customer-facing командах</li>
+                <li>3 офиса: Москва, Алматы, Белград</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="section-title-row">
+            <div>
+              <div class="kicker">09 · roadmap</div>
+              <h2>План развития на 12 месяцев</h2>
+            </div>
+            <div class="mini-tag">Product + GTM priorities</div>
+          </div>
+          <div class="timeline">
+            <div class="card">
+              <div class="label">Q3</div>
+              <div class="stat">AI Assist</div>
+              <p class="label">Встроенный copilot для расследования инцидентов, объяснение риска и генерация next best action.</p>
+            </div>
+            <div class="card">
+              <div class="label">Q4</div>
+              <div class="stat">OT Pack</div>
+              <p class="label">Пакет коннекторов и сценариев под производственные инфраструктуры и распределённые площадки.</p>
+            </div>
+            <div class="card">
+              <div class="label">Q1</div>
+              <div class="stat">Partner API</div>
+              <p class="label">Открытый слой интеграций для MSSP, системных интеграторов и совместных managed-решений.</p>
+            </div>
+            <div class="card">
+              <div class="label">Q2</div>
+              <div class="stat">Regional scale</div>
+              <p class="label">Выход на новые рынки СНГ и MENA через канал продаж и локальные внедренческие команды.</p>
+            </div>
+          </div>
+          <div class="metrics">
+            <div class="card"><div class="label">Цель ARR</div><div class="stat">₽320 млн</div></div>
+            <div class="card"><div class="label">Новые enterprise-клиенты</div><div class="stat">+28</div></div>
+            <div class="card"><div class="label">Доля партнёрских продаж</div><div class="stat">24%</div></div>
+            <div class="card"><div class="label">Время запуска пилота</div><div class="stat">14 дней</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="kicker">10 · финал</div>
+          <h2>Noctis Secure помогает компаниям снижать риск, а не только собирать алерты</h2>
+          <div class="close-layout">
+            <div class="card cta-box">
+              <div>
+                <p class="lead" style="max-width:none;">Мы объединяем visibility, аналитику и автоматизацию в одном контуре, чтобы команды безопасности быстрее принимали решения и предотвращали потери бизнеса.</p>
+                <div class="cta-buttons">
+                  <a class="btn primary" href="#">Запросить демо</a>
+                  <a class="btn" href="#">Обсудить пилот</a>
+                </div>
+              </div>
+              <div class="small-note">Демо-контакты: hello@noctis-secure.demo · +7 (900) 555-21-21</div>
+            </div>
+            <div class="muted-grid">
+              <div class="card">
+                <div class="label">Итоговое позиционирование</div>
+                <p class="lead" style="font-size:18px;max-width:none;">Не просто SIEM или SOAR, а платформа киберустойчивости с понятным бизнес-эффектом.</p>
+              </div>
+              <div class="card">
+                <div class="label">Для кого</div>
+                <p class="lead" style="font-size:18px;max-width:none;">Компании, где безопасность влияет на выручку, непрерывность процессов и доверие клиентов.</p>
+              </div>
+              <div class="card">
+                <div class="label">Что дальше</div>
+                <p class="lead" style="font-size:18px;max-width:none;">Можно адаптировать эту презентацию под инвестора, клиента, тендер или выступление.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="hint">← → / ↑ ↓ / колесо мыши — переключение слайдов</div>
+    <div class="nav">
+      <button id="prevBtn" aria-label="Предыдущий слайд">←</button>
+      <button id="nextBtn" aria-label="Следующий слайд">→</button>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const slidesWrap = document.getElementById('slides');
+    const currentEl = document.getElementById('currentSlide');
+    const totalEl = document.getElementById('totalSlides');
+    const progressBar = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let index = 0;
+    let wheelLocked = false;
+    totalEl.textContent = slides.length;
+
+    function updateSlides() {
+      slidesWrap.style.transform = `translateY(-${index * 100}vh)`;
+      currentEl.textContent = index + 1;
+      const progress = ((index + 1) / slides.length) * 100;
+      progressBar.style.width = progress + '%';
+      prevBtn.style.opacity = index === 0 ? 0.45 : 1;
+      nextBtn.style.opacity = index === slides.length - 1 ? 0.45 : 1;
+    }
+
+    function goToSlide(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      updateSlides();
+    }
+
+    function nextSlide() { goToSlide(index + 1); }
+    function prevSlide() { goToSlide(index - 1); }
+
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault();
+        nextSlide();
+      }
+      if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        prevSlide();
+      }
+      if (e.key === 'Home') goToSlide(0);
+      if (e.key === 'End') goToSlide(slides.length - 1);
+    });
+
+    window.addEventListener('wheel', (e) => {
+      if (wheelLocked) return;
+      wheelLocked = true;
+      setTimeout(() => wheelLocked = false, 650);
+      if (Math.abs(e.deltaY) < 10) return;
+      if (e.deltaY > 0) nextSlide();
+      else prevSlide();
+    }, { passive: true });
+
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartY = e.changedTouches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      const touchEndY = e.changedTouches[0].clientY;
+      const delta = touchStartY - touchEndY;
+      if (Math.abs(delta) < 40) return;
+      if (delta > 0) nextSlide();
+      else prevSlide();
+    }, { passive: true });
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    updateSlides();
+  </script>
+</body>
+</html>
